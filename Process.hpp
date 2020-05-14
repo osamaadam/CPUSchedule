@@ -7,7 +7,7 @@ struct Process
 {
   int processID = -1;
   int cpuTime, ioTime, arrivalTime = 0;
-  int turnaroundTime, finishingTime, startingTime = 0;
+  int turnaroundTime, finishingTime, startingTime = -1;
   std::string state = "waiting";
 
   Process(){};

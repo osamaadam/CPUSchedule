@@ -9,9 +9,15 @@
 #include <map>
 #include <vector>
 
-std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
+struct Timeline
 {
   std::vector<std::vector<Process>> state;
+  std::vector<Process> processes;
+};
+
+Timeline fcfsScheduling(std::vector<Process> &processes)
+{
+  Timeline returnStruct;
   int cycle = 0;
 
   std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
@@ -33,7 +39,13 @@ std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
     std::vector<Process> temp;
 
     if (running && !running->cpuTime && !running->ioTime)
+    {
+      running->finishingTime = cycle - 1;
+      running->turnaroundTime = running->finishingTime - running->startingTime + 1;
+      running->state = "terminated";
+      returnStruct.processes.push_back(*running);
       running = nullptr;
+    }
     else if (running && !running->cpuTime && running->ioTime)
     {
       running->state = "blocked";
@@ -46,6 +58,8 @@ std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
       for (auto j = arrivalMap[cycle].begin(); j != arrivalMap[cycle].end(); j++)
       {
         j->state = "ready";
+        if (j->startingTime == -1)
+          j->startingTime = cycle;
         ready.push_back(*j);
       }
     }
@@ -77,7 +91,6 @@ std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
       auto dummy = ready.front();
       running = &dummy;
       running->state = "running";
-      running->startingTime = cycle;
       ready.pop_front();
     }
 
@@ -96,11 +109,11 @@ std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
       temp.push_back(ready[i]);
 
     if (!temp.empty())
-      state.push_back(temp);
+      returnStruct.state.push_back(temp);
 
     cycle++;
   }
-  return state;
+  return returnStruct;
 }
 
 #endif
