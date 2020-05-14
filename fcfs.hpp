@@ -2,18 +2,19 @@
 #define FCFS
 
 #include "Process.hpp"
-#include "Program.hpp"
 #include <algorithm>
+#include <deque>
 #include <iostream>
+#include <list>
+#include <map>
 #include <vector>
 
 std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
 {
   std::vector<std::vector<Process>> state;
-  std::vector<Process> temp;
   int cycle = 0;
 
-  std::sort(processes.begin(), processes.end(), [](Process a, Process b) {
+  std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
     return a.arrivalTime < b.arrivalTime;
   });
 
@@ -27,10 +28,18 @@ std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
     arrivalMap[i.arrivalTime].push_back(i);
   }
 
-  while (running || !blocked.empty() || !ready.empty() || arrivalMap.rbegin()->first >= cycle)
+  while (running || !blocked.empty() || !ready.empty() || arrivalMap.rbegin()->first > cycle)
   {
-
     std::vector<Process> temp;
+
+    if (running && !running->cpuTime && !running->ioTime)
+      running = nullptr;
+    else if (running && !running->cpuTime && running->ioTime)
+    {
+      running->state = "blocked";
+      blocked.push_back(*running);
+      running = nullptr;
+    }
 
     if (!arrivalMap[cycle].empty())
     {
@@ -65,43 +74,29 @@ std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
         return a.processID < b.processID;
       });
 
-      Process dummy = ready.front();
+      auto dummy = ready.front();
       running = &dummy;
       running->state = "running";
       running->startingTime = cycle;
       ready.pop_front();
     }
 
-    if (running)
+    if (running && running->cpuTime)
     {
-      if (!running->cpuTime)
-      {
-        if (running->ioTime)
-        {
-          running->state = "blocked";
-          running->ioTime--;
-          blocked.push_back(*running);
-        }
-        else
-          temp.push_back(*running);
-
-        running = nullptr;
-      }
-      else
-      {
-        running->cpuTime--;
-      }
+      running->cpuTime--;
     }
 
     if (running)
       temp.push_back(*running);
 
-    for (auto i : blocked)
-      temp.push_back(i);
-    for (auto i : ready)
-      temp.push_back(i);
+    for (auto i = blocked.begin(); i != blocked.end(); i++)
+      temp.push_back(*i);
 
-    state.push_back(temp);
+    for (unsigned int i = 0; i < ready.size(); i++)
+      temp.push_back(ready[i]);
+
+    if (!temp.empty())
+      state.push_back(temp);
 
     cycle++;
   }
