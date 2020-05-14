@@ -17,83 +17,39 @@ std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
     return a.arrivalTime < b.arrivalTime;
   });
 
-  Program *program = new Program(&processes[0]);
-  program->running->state = "running";
-  program->running->startingTime = 0;
+  Process *running = nullptr;
+  std::list<Process> blocked;
+  std::deque<Process> ready;
+  std::map<int, std::vector<Process>> arrivalMap;
 
   for (auto i : processes)
   {
-    program->arrivalMap[i.arrivalTime].push_back(i);
+    arrivalMap[i.arrivalTime].push_back(i);
   }
 
-  while (program->running || !program->blocked.empty() || !program->ready.empty() || program->arrivalMap.rbegin()->first >= cycle)
+  while (running || !blocked.empty() || !ready.empty() || arrivalMap.rbegin()->first >= cycle)
   {
 
     std::vector<Process> temp;
 
-    if (!program->arrivalMap[cycle].empty())
+    if (!arrivalMap[cycle].empty())
     {
-      for (auto i : program->arrivalMap[cycle])
+      for (auto j = arrivalMap[cycle].begin(); j != arrivalMap[cycle].end(); j++)
       {
-        if (program->running && *program->running != i)
-        {
-          i.state = "ready";
-          program->ready.push_back(i);
-        }
-        else if (!program->running)
-        {
-          i.state = "ready";
-          program->ready.push_back(i);
-        }
+        j->state = "ready";
+        ready.push_back(*j);
       }
     }
 
-    if (!program->running)
+    if (!blocked.empty())
     {
-      if (program->ready.size())
-      {
-        std::sort(program->ready.begin(), program->ready.end(), [](Process &a, Process &b) {
-          return a.processID < b.processID;
-        });
-
-        Process dummy = program->ready.front();
-        program->running = &dummy;
-        program->running->state = "running";
-        program->ready.pop_front();
-      }
-    }
-
-    if (program->running)
-    {
-      program->running->state = "running";
-      if (!program->running->cpuTime)
-      {
-        if (program->running->ioTime)
-        {
-          program->running->state = "blocked";
-          program->running->ioTime--;
-          program->blocked.push_back(*program->running);
-        }
-        else
-          temp.push_back(*program->running);
-
-        program->running = nullptr;
-      }
-      else
-      {
-        program->running->cpuTime--;
-      }
-    }
-
-    if (!program->blocked.empty())
-    {
-      auto i = program->blocked.begin();
-      while (i != program->blocked.end())
+      auto i = blocked.begin();
+      while (i != blocked.end())
       {
         if (i->ioTime == 0)
         {
-          program->ready.push_back(*i);
-          program->blocked.erase(i++);
+          ready.push_back(*i);
+          blocked.erase(i++);
         }
         else
         {
@@ -103,19 +59,52 @@ std::vector<std::vector<Process>> fcfs(std::vector<Process> &processes)
       }
     }
 
-    if (program->running)
-      temp.push_back(*program->running);
+    if (!running && ready.size())
+    {
+      std::sort(ready.begin(), ready.end(), [](Process a, Process b) {
+        return a.processID < b.processID;
+      });
 
-    for (auto i : program->blocked)
+      Process dummy = ready.front();
+      running = &dummy;
+      running->state = "running";
+      running->startingTime = cycle;
+      ready.pop_front();
+    }
+
+    if (running)
+    {
+      if (!running->cpuTime)
+      {
+        if (running->ioTime)
+        {
+          running->state = "blocked";
+          running->ioTime--;
+          blocked.push_back(*running);
+        }
+        else
+          temp.push_back(*running);
+
+        running = nullptr;
+      }
+      else
+      {
+        running->cpuTime--;
+      }
+    }
+
+    if (running)
+      temp.push_back(*running);
+
+    for (auto i : blocked)
       temp.push_back(i);
-    for (auto i : program->ready)
+    for (auto i : ready)
       temp.push_back(i);
 
     state.push_back(temp);
 
     cycle++;
   }
-
   return state;
 }
 

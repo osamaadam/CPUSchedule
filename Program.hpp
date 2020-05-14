@@ -6,13 +6,14 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <vector>
 
 struct Program
 {
   Process *running;
   std::list<Process> blocked;
   std::deque<Process> ready;
-  std::map<int, std::deque<Process>> arrivalMap;
+  std::map<int, std::vector<Process>> arrivalMap;
 
   Program(Process *running)
   {
