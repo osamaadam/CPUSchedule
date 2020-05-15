@@ -6,7 +6,7 @@
 struct Process
 {
   int processID = -1;
-  int cpuTime, ioTime, arrivalTime = 0;
+  int cpuTime, ioTime, arrivalTime, quanta = -1;
   int turnaroundTime, finishingTime, startingTime = -1;
   std::string state = "waiting";
 

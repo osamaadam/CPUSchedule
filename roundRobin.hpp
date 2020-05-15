@@ -1,5 +1,5 @@
-#ifndef FCFS
-#define FCFS
+#ifndef ROUNDROBIN
+#define ROUNDROBIN
 
 #include "Process.hpp"
 #include "Timeline.hpp"
@@ -10,7 +10,7 @@
 #include <map>
 #include <vector>
 
-Timeline fcfsScheduling(std::vector<Process> &processes)
+Timeline roundRobin(std::vector<Process> &processes, int quanta)
 {
   Timeline returnStruct;
   int cycle = 0;
@@ -41,6 +41,11 @@ Timeline fcfsScheduling(std::vector<Process> &processes)
       returnStruct.processes.push_back(*running);
       running = nullptr;
     }
+    else if (running && !running->quanta && (running->ioTime || running->cpuTime))
+    {
+      running->state = "ready";
+      ready.push_back(*running);
+    }
     else if (running && !running->cpuTime && running->ioTime)
     {
       running->state = "blocked";
@@ -50,6 +55,10 @@ Timeline fcfsScheduling(std::vector<Process> &processes)
 
     if (!arrivalMap[cycle].empty())
     {
+      std::sort(arrivalMap[cycle].begin(), arrivalMap[cycle].end(), [](Process a, Process b) {
+        return a.processID < b.processID;
+      });
+
       for (auto j = arrivalMap[cycle].begin(); j != arrivalMap[cycle].end(); j++)
       {
         j->state = "ready";
@@ -66,6 +75,7 @@ Timeline fcfsScheduling(std::vector<Process> &processes)
       {
         if (i->ioTime == 0)
         {
+          i->state = "ready";
           ready.push_back(*i);
           blocked.erase(i++);
         }
@@ -79,19 +89,17 @@ Timeline fcfsScheduling(std::vector<Process> &processes)
 
     if (!running && ready.size())
     {
-      std::sort(ready.begin(), ready.end(), [](Process a, Process b) {
-        return a.processID < b.processID;
-      });
-
       auto dummy = ready.front();
       running = &dummy;
+      running->quanta = quanta;
       running->state = "running";
       ready.pop_front();
     }
 
-    if (running && running->cpuTime)
+    if (running && running->cpuTime && running->quanta)
     {
       running->cpuTime--;
+      running->quanta--;
     }
 
     if (running)
