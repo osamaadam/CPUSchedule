@@ -9,7 +9,10 @@ Then run the following commands to compile
 
 ### Compiling
 
-Make sure you have make and g++ installed on your device. If not, you should first run the folliwing commands.
+Make sure you have _make_ and _g++_ installed on your device. If not, you should first run the following commands.
+
+_These commands are specific to Debian Linux._
+_Use the appropriate installation method for your respective operating system._
 
 ```sh
 -$ sudo apt update
@@ -38,8 +41,8 @@ Depending on your choice, the output will be at outputFCFS.txt or outputRR.txt r
 
 ### Input
 
-Input is to be written inside a file called _input.txt_.
-Please create it if for some reason it's not in the project files.
+Input is to be written inside a file named _input.txt_ in the source directory.
+Please create it if for some reason it's not already in the project files.
 
 The template for _input.txt_ should be as follows.
 
