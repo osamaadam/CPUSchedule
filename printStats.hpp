@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
-void printStats(Timeline stats)
+void printStats(std::string fileName, Timeline stats)
 {
   std::string content;
   float activityTime = 0;
@@ -45,7 +45,10 @@ void printStats(Timeline stats)
     content += std::to_string(i.turnaroundTime) + "\n";
   }
 
-  writeToFile("outputFCFS.txt", content);
+  writeToFile(fileName, content);
+  std::cout << "Writing done!\n"
+            << "Please check " << fileName << "!"
+            << "\n";
 }
 
 #endif

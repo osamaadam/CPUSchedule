@@ -10,7 +10,7 @@
 #include <map>
 #include <vector>
 
-Timeline fcfsScheduling(std::vector<Process> &processes)
+Timeline firstServed(std::vector<Process> &processes)
 {
   Timeline returnStruct;
   int cycle = 0;

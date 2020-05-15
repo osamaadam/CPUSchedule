@@ -1,6 +1,7 @@
 #include "Timeline.hpp"
-#include "fcfsScheduling.hpp"
+#include "firstServed.hpp"
 #include "printStats.hpp"
+#include "prompt.hpp"
 #include "readFile.hpp"
 #include "roundRobin.hpp"
 #include <algorithm>
@@ -8,11 +9,21 @@
 
 int main()
 {
+  Choice choice = prompt();
   std::vector<Process> processVec = readFile("input.txt");
+  Timeline stats;
 
-  // Timeline fcfsStats = fcfsScheduling(processVec);
-  // printStats(fcfsStats);
-
-  Timeline roundRobinStats = roundRobin(processVec, 10);
-  printStats(roundRobinStats);
+  switch (choice.mode)
+  {
+  case 0:
+    stats = firstServed(processVec);
+    printStats("outputFCFS.txt", stats);
+    break;
+  case 1:
+    stats = roundRobin(processVec, choice.quanta);
+    printStats("outputRR.txt", stats);
+    break;
+  default:
+    break;
+  }
 }
