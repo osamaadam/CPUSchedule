@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
-void printStats(std::string fileName, Timeline stats)
+std::string printStats(std::string fileName, Timeline stats)
 {
   std::string content;
   float activityTime = 0;
@@ -49,6 +49,8 @@ void printStats(std::string fileName, Timeline stats)
   std::cout << "Writing done!\n"
             << "Please check " << fileName << "!"
             << "\n";
+
+  return content;
 }
 
 #endif

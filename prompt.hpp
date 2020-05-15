@@ -2,7 +2,6 @@
 #define PROMPT
 
 #include <iostream>
-#include <limits>
 
 struct Choice
 {

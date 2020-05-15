@@ -4,7 +4,6 @@
 #include "prompt.hpp"
 #include "readFile.hpp"
 #include "roundRobin.hpp"
-#include <algorithm>
 #include <iostream>
 
 int main()

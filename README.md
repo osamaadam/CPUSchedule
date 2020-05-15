@@ -25,7 +25,7 @@ Then you may navigate to the project folder and run the following commands.
 
 ### What to expect
 
-After running the project, you'll be prompt to enter the algorithm you'd like to simulate.
+After running the project, you'll be prompted to enter the algorithm you'd like to simulate.
 
 ```
 0: First Come First Served (FCFS)
