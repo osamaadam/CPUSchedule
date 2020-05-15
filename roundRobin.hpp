@@ -41,10 +41,17 @@ Timeline roundRobin(std::vector<Process> &processes, int quanta)
       returnStruct.processes.push_back(*running);
       running = nullptr;
     }
-    else if (running && !running->quanta && (running->ioTime || running->cpuTime))
+    else if (running && !running->quanta && running->cpuTime)
     {
       running->state = "ready";
       ready.push_back(*running);
+      running = nullptr;
+    }
+    else if (running && !running->quanta && running->ioTime)
+    {
+      running->state = "blocked";
+      blocked.push_back(*running);
+      running = nullptr;
     }
     else if (running && !running->cpuTime && running->ioTime)
     {
