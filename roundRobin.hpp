@@ -112,11 +112,11 @@ Timeline roundRobin(std::vector<Process> &processes, int quanta)
     if (running)
       temp.push_back(*running);
 
-    for (auto i = blocked.begin(); i != blocked.end(); ++i)
-      temp.push_back(*i);
+    for (auto &i : blocked)
+      temp.push_back(i);
 
-    for (unsigned int i = 0; i < ready.size(); ++i)
-      temp.push_back(ready[i]);
+    for (auto &i : ready)
+      temp.push_back(i);
 
     if (!temp.empty())
       returnStruct.state.push_back(temp);

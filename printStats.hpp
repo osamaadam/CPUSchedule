@@ -32,8 +32,11 @@ std::string printStats(std::string fileName, Timeline stats)
     index++;
   }
 
+  std::string cpuUtilization = std::to_string((activityTime / stats.state.size()) * 100);
+  cpuUtilization.replace(cpuUtilization.begin() + 2, cpuUtilization.end(), "");
+
   content += "\nFinishing Time: " + std::to_string(stats.state.size() - 1) + "\n";
-  content += "CPU utilization: " + std::to_string((activityTime / stats.state.size())) + "\n";
+  content += "CPU utilization: " + cpuUtilization + "%\n";
 
   std::sort(stats.processes.begin(), stats.processes.end(), [](Process a, Process b) {
     return a.processID < b.processID;

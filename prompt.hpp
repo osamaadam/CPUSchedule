@@ -27,7 +27,7 @@ Choice prompt()
     std::cout << "You chose round robin.\n";
     std::cout << "Please enter the time quanta for each process.\n";
     std::cin >> choice.quanta;
-    while (std::cin.fail())
+    while (std::cin.fail() || !choice.quanta)
     {
       std::cin.clear();
       std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
