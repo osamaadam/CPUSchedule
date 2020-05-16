@@ -67,7 +67,7 @@ Timeline firstServed(std::vector<Process> &processes)
         if (i->ioTime == 0)
         {
           ready.push_back(*i);
-          blocked.erase(i++);
+          i = blocked.erase(i);
         }
         else
         {
@@ -97,10 +97,10 @@ Timeline firstServed(std::vector<Process> &processes)
     if (running)
       temp.push_back(*running);
 
-    for (auto i = blocked.begin(); i != blocked.end(); i++)
+    for (auto i = blocked.begin(); i != blocked.end(); ++i)
       temp.push_back(*i);
 
-    for (unsigned int i = 0; i < ready.size(); i++)
+    for (unsigned int i = 0; i < ready.size(); ++i)
       temp.push_back(ready[i]);
 
     if (!temp.empty())
