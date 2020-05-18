@@ -34,16 +34,12 @@ std::vector<Process> readFile(std::string fileName)
   {
     if (i.size() == 4)
     {
-      Process process;
-      process.processID = std::stoi(i[0]);
-      process.cpuTime = std::stoi(i[1]);
-      process.ioTime = std::stoi(i[2]);
-      process.arrivalTime = std::stoi(i[3]);
+      Process process(std::stoi(i[0]), std::stoi(i[1]), std::stoi(i[2]), std::stoi(i[3]));
       processVec.push_back(process);
     }
     else
     {
-      std::cout << "Invalid input\n";
+      std::cout << "***Invalid input***\n";
     }
   }
 

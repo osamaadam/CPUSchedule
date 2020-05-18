@@ -6,11 +6,12 @@
 struct Process
 {
   int processID = -1;
-  int cpuTime, ioTime, arrivalTime, quanta = -1;
+  int cpuTime, ioTime, arrivalTime, pseudoArrivalTime, quanta = -1;
   int turnaroundTime, finishingTime, startingTime = -1;
   std::string state = "waiting";
 
-  Process(){};
+  Process(int processID, int cpuTime, int ioTime, int arrivalTime)
+      : processID(processID), cpuTime(cpuTime), ioTime(ioTime), arrivalTime(arrivalTime), pseudoArrivalTime(arrivalTime){};
 
   bool operator==(const struct Process &a) const
   {

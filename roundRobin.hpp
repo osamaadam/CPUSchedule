@@ -47,13 +47,7 @@ Timeline roundRobin(std::vector<Process> &processes, int quanta)
       ready.push_back(*running);
       running = nullptr;
     }
-    else if (running && !running->quanta && running->ioTime)
-    {
-      running->state = "blocked";
-      blocked.push_back(*running);
-      running = nullptr;
-    }
-    else if (running && !running->cpuTime && running->ioTime)
+    else if (running && (!running->quanta || !running->cpuTime) && running->ioTime)
     {
       running->state = "blocked";
       blocked.push_back(*running);
@@ -62,10 +56,6 @@ Timeline roundRobin(std::vector<Process> &processes, int quanta)
 
     if (!arrivalMap[cycle].empty())
     {
-      std::sort(arrivalMap[cycle].begin(), arrivalMap[cycle].end(), [](Process a, Process b) {
-        return a.processID < b.processID;
-      });
-
       for (auto j = arrivalMap[cycle].begin(); j != arrivalMap[cycle].end(); j++)
       {
         j->state = "ready";
@@ -82,6 +72,7 @@ Timeline roundRobin(std::vector<Process> &processes, int quanta)
       {
         if (i->ioTime == 0)
         {
+          i->pseudoArrivalTime = cycle;
           i->state = "ready";
           ready.push_back(*i);
           i = blocked.erase(i);
@@ -94,8 +85,15 @@ Timeline roundRobin(std::vector<Process> &processes, int quanta)
       }
     }
 
-    if (!running && ready.size())
+    if (!running && !ready.empty())
     {
+      if (ready.size() > 1)
+        std::sort(ready.begin(), ready.end(), [](Process &a, Process &b) {
+          if (a.pseudoArrivalTime == b.pseudoArrivalTime)
+            return a.processID < b.processID;
+          return a.pseudoArrivalTime < b.pseudoArrivalTime;
+        });
+
       auto dummy = ready.front();
       running = &dummy;
       running->quanta = quanta;
@@ -112,10 +110,10 @@ Timeline roundRobin(std::vector<Process> &processes, int quanta)
     if (running)
       temp.push_back(*running);
 
-    for (auto &i : blocked)
+    for (auto const &i : blocked)
       temp.push_back(i);
 
-    for (auto &i : ready)
+    for (auto const &i : ready)
       temp.push_back(i);
 
     if (!temp.empty())

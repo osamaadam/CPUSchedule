@@ -66,6 +66,8 @@ Timeline firstServed(std::vector<Process> &processes)
       {
         if (i->ioTime == 0)
         {
+          i->pseudoArrivalTime = cycle;
+          i->state = "ready";
           ready.push_back(*i);
           i = blocked.erase(i);
         }
@@ -77,11 +79,14 @@ Timeline firstServed(std::vector<Process> &processes)
       }
     }
 
-    if (!running && ready.size())
+    if (!running && !ready.empty())
     {
-      std::sort(ready.begin(), ready.end(), [](Process a, Process b) {
-        return a.processID < b.processID;
-      });
+      if (ready.size() > 1)
+        std::sort(ready.begin(), ready.end(), [](Process &a, Process &b) {
+          if (a.pseudoArrivalTime == b.pseudoArrivalTime)
+            return a.processID < b.processID;
+          return a.pseudoArrivalTime < b.pseudoArrivalTime;
+        });
 
       auto dummy = ready.front();
       running = &dummy;
@@ -97,10 +102,10 @@ Timeline firstServed(std::vector<Process> &processes)
     if (running)
       temp.push_back(*running);
 
-    for (auto &i : blocked)
+    for (auto const &i : blocked)
       temp.push_back(i);
 
-    for (auto &i : ready)
+    for (auto const &i : ready)
       temp.push_back(i);
 
     if (!temp.empty())
