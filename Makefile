@@ -11,3 +11,5 @@ $(targets):
 
 clean:
 	rm -f $(targets)
+format:
+	clang-format --style=file -i *.cpp *.hpp

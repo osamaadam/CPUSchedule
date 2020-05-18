@@ -1,32 +1,28 @@
 #ifndef PRINTSTATS
 #define PRINTSTATS
 
-#include "Timeline.hpp"
-#include "writeToFile.hpp"
 #include <algorithm>
 #include <iostream>
 
-std::string printStats(std::string fileName, Timeline stats)
-{
+#include "Timeline.hpp"
+#include "writeToFile.hpp"
+
+std::string printStats(std::string fileName, Timeline stats) {
   std::string content;
   float activityTime = 0;
 
   int index = 0;
 
-  for (auto i : stats.state)
-  {
-
+  for (auto i: stats.state) {
     std::sort(i.begin(), i.end(), [](Process a, Process b) {
       return a.processID < b.processID;
     });
 
     content += std::to_string(index);
     content += " ";
-    for (auto process : i)
-    {
+    for (auto const &process: i) {
       content += std::to_string(process.processID) + ": " + process.state + " ";
-      if (process.state == "running")
-        activityTime++;
+      if (process.state == "running") activityTime++;
     }
     content += "\n";
     index++;
@@ -45,8 +41,7 @@ std::string printStats(std::string fileName, Timeline stats)
     return a.processID < b.processID;
   });
 
-  for (auto i : stats.processes)
-  {
+  for (auto const &i: stats.processes) {
     content += "Turnaround time of process " + std::to_string(i.processID) + ": ";
     content += std::to_string(i.turnaroundTime) + "\n";
   }
