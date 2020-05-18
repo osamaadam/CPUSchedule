@@ -44,6 +44,7 @@ Timeline roundRobin(std::vector<Process> &processes, int quanta)
     else if (running && !running->quanta && running->cpuTime)
     {
       running->state = "ready";
+      running->pseudoArrivalTime = cycle;
       ready.push_back(*running);
       running = nullptr;
     }

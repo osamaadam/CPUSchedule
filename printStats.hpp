@@ -33,7 +33,10 @@ std::string printStats(std::string fileName, Timeline stats)
   }
 
   std::string cpuUtilization = std::to_string((activityTime / stats.state.size()) * 100);
-  cpuUtilization.replace(cpuUtilization.begin() + 2, cpuUtilization.end(), "");
+  if (*(cpuUtilization.begin() + 2) != '0')
+    cpuUtilization.replace(cpuUtilization.begin() + 2, cpuUtilization.end(), "");
+  else
+    cpuUtilization.replace(cpuUtilization.begin() + 3, cpuUtilization.end(), "");
 
   content += "\nFinishing Time: " + std::to_string(stats.state.size() - 1) + "\n";
   content += "CPU utilization: " + cpuUtilization + "%\n";
