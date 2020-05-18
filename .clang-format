@@ -1,16 +1,18 @@
 BasedOnStyle: Google
 IndentWidth: 2
-ContinuationIndentWidth: 2
 ColumnLimit: 100
+ContinuationIndentWidth: 2
+
 AlignAfterOpenBracket: DontAlign
-BreakBeforeBinaryOperators: true
 AllowAllConstructorInitializersOnNextLine: true
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: false
-SpaceBeforeRangeBasedForLoopColon: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortLambdasOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
 BreakBeforeBinaryOperators: NonAssignment
+SpaceBeforeRangeBasedForLoopColon: false

@@ -22,7 +22,8 @@ std::string printStats(std::string fileName, Timeline stats) {
     content += " ";
     for (auto const &process: i) {
       content += std::to_string(process.processID) + ": " + process.state + " ";
-      if (process.state == "running") activityTime++;
+      if (process.state == "running")
+        activityTime++;
     }
     content += "\n";
     index++;

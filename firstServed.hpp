@@ -15,7 +15,7 @@ Timeline firstServed(std::vector<Process> &processes) {
   Timeline returnStruct;
   int cycle = 0;
 
-  std::sort(processes.begin(), processes.end(), [](auto a, auto b) {
+  std::sort(processes.begin(), processes.end(), [](auto &a, auto &b) {
     return a.arrivalTime < b.arrivalTime;
   });
 
@@ -24,7 +24,7 @@ Timeline firstServed(std::vector<Process> &processes) {
   std::deque<Process> ready;
   std::map<int, std::vector<Process>> arrivalMap;
 
-  for (auto i: processes) {
+  for (auto &i: processes) {
     arrivalMap[i.arrivalTime].push_back(i);
   }
 
@@ -44,10 +44,11 @@ Timeline firstServed(std::vector<Process> &processes) {
     }
 
     if (!arrivalMap[cycle].empty()) {
-      for (auto j = arrivalMap[cycle].begin(); j != arrivalMap[cycle].end(); j++) {
-        j->state = "ready";
-        if (j->startingTime == -1) j->startingTime = cycle;
-        ready.push_back(*j);
+      for (auto &i: arrivalMap[cycle]) {
+        i.state = "ready";
+        if (i.startingTime == -1)
+          i.startingTime = cycle;
+        ready.push_back(i);
       }
     }
 
@@ -69,7 +70,8 @@ Timeline firstServed(std::vector<Process> &processes) {
     if (!running && !ready.empty()) {
       if (ready.size() > 1)
         std::sort(ready.begin(), ready.end(), [](Process &a, Process &b) {
-          if (a.pseudoArrivalTime == b.pseudoArrivalTime) return a.processID < b.processID;
+          if (a.pseudoArrivalTime == b.pseudoArrivalTime)
+            return a.processID < b.processID;
           return a.pseudoArrivalTime < b.pseudoArrivalTime;
         });
 
@@ -83,13 +85,17 @@ Timeline firstServed(std::vector<Process> &processes) {
       running->cpuTime--;
     }
 
-    if (running) temp.push_back(*running);
+    if (running)
+      temp.push_back(*running);
 
-    for (auto const &i: blocked) temp.push_back(i);
+    for (auto const &i: blocked)
+      temp.push_back(i);
 
-    for (auto const &i: ready) temp.push_back(i);
+    for (auto const &i: ready)
+      temp.push_back(i);
 
-    if (!temp.empty()) returnStruct.state.push_back(temp);
+    if (!temp.empty())
+      returnStruct.state.push_back(temp);
 
     cycle++;
   }
